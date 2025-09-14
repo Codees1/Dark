@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkStress</title>
+    <style>
+        :root {
+            --black: #000000;
+            --dark-red: #8b0000;
+            --bright-red: #ff0000;
+            --text-color: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: var(--black);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            background: var(--black);
+            border: 2px solid var(--bright-red);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--bright-red);
+            width: 100%;
+            max-width: 800px;
+            animation: pulseGlow 2s infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px var(--bright-red); }
+            50% { box-shadow: 0 0 40px var(--bright-red), 0 0 60px rgba(255, 0, 0, 0.5); }
+            100% { box-shadow: 0 0 20px var(--bright-red); }
+        }
+        
+        .header {
+            background: var(--dark-red);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--bright-red);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--bright-red);
+            animation: flicker 1.5s infinite;
+        }
+        
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            text-shadow: 0 0 5px var(--bright-red);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--bright-red);
+            text-shadow: 0 0 5px var(--bright-red);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--bright-red);
+            border-radius: 5px;
+            background: var(--black);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--bright-red);
+            border-color: var(--bright-red);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .attack-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .attack-type {
+            background: var(--black);
+            padding: 15px;
+            border: 2px solid var(--bright-red);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .attack-type:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--bright-red);
+            background: var(--dark-red);
+        }
+        
+        .attack-type.selected {
+            background: var(--dark-red);
+            box-shadow: 0 0 20px var(--bright-red);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .btn-start {
+            background: var(--bright-red);
+            color: var(--text-color);
+            text-shadow: 0 0 5px var(--black);
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--bright-red);
+            animation: pulse 0.5s infinite;
+        }
+        
+        .btn-stop {
+            background: var(--black);
+            border: 2px solid var(--bright-red);
+            color: var(--bright-red);
+        }
+        
+        .btn-stop:hover {
+            background: var(--dark-red);
+            color: var(--text-color);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--bright-red);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--black);
+            border: 2px solid var(--bright-red);
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .results.visible {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            background: var(--dark-red);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 0 10px var(--bright-red);
+            animation: glow 1.5s infinite;
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px var(--bright-red); }
+            50% { box-shadow: 0 0 20px var(--bright-red); }
+            100% { box-shadow: 0 0 10px var(--bright-red); }
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--bright-red);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: var(--black);
+            border: 2px solid var(--bright-red);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--bright-red);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--bright-red);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 0, 0, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 0, 0, 0.3) 50%, rgba(255, 0, 0, 0.3) 75%, transparent 75%, transparent);
+            background-size: 20px 20px;
+            animation: moveStripes 1s linear infinite;
+        }
+        
+        @keyframes moveStripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            background: var(--dark-red);
+            color: var(--text-color);
+            text-shadow: 0 0 5px var(--bright-red);
+            animation: flash 1s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .warning {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--dark-red);
+            border: 2px solid var(--bright-red);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            text-shadow: 0 0 5px var(--bright-red);
+            animation: warningPulse 2s infinite;
+        }
+        
+        @keyframes warningPulse {
+            0% { box-shadow: 0 0 10px var(--bright-red); }
+            50% { box-shadow: 0 0 20px var(--bright-red); }
+            100% { box-shadow: 0 0 10px var(--bright-red); }
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 5px;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background: var(--black);
+            color: var(--text-color);
+            text-align: center;
+            border-radius: 5px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 2px solid var(--bright-red);
+            box-shadow: 0 0 10px var(--bright-red);
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dark Stress</h1>
+            <div class="subtitle">Ddos Tool</div>
+        </div>
+        
+        <div class="content">
+            <form id="attackForm">
+                <div class="form-group">
+                    <label for="target">Target URL or IP Address</label>
+                    <input type="text" id="target" name="target" placeholder="" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="port">Port (default: 80 for HTTP, 443 for HTTPS)</label>
+                    <input type="number" id="port" name="port" placeholder="80" min="1" max="65535">
+                </div>
+                
+                <div class="form-group">
+                    <label>Attack Type</label>
+                    <div class="attack-types">
+                        <div class="attack-type selected" onclick="selectAttackType('http')">
+                            <input type="radio" name="attack_type" value="http" id="http" checked style="display: none;">
+                            <label for="http">HTTP Flood</label>
+                        </div>
+                        <div class="attack-type" onclick="selectAttackType('tcp')">
+                            <input type="radio" name="attack_type" value="tcp" id="tcp" style="display: none;">
+                            <label for="tcp">TCP Flood</label>
+                        </div>
+                        <div class="attack-type" onclick="selectAttackType('udp')">
+                            <input type="radio" name="attack_type" value="udp" id="udp" style="display: none;">
+                            <label for="udp">UDP Flood</label>
+                        </div>
+                        <div class="attack-type" onclick="selectAttackType('slow')">
+                            <input type="radio" name="attack_type" value="slow" id="slow" style="display: none;">
+                            <label for="slow">Slowloris</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="threads">Number of Threads</label>
+                    <input type="number" id="threads" name="threads" placeholder="1000" value="1000" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="duration">Duration (seconds, 0 for infinite)</label>
+                    <input type="number" id="duration" name="duration" placeholder="0" value="0" min="0" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="stealth_mode" name="stealth_mode">
+                    <label for="stealth_mode">Enable Stealth Mode</label>
+                    <div class="tooltip">?
+                        <span class="tooltiptext">Random delays and user agents to avoid detection</span>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button type="button" onclick="startAttack()" class="btn-start">Start Attack</button>
+                    <button type="button" onclick="stopAttack()" class="btn-stop">Stop Attack</button>
+                </div>
+            </form>
+            
+            <div class="results" id="results">
+                <h3>Attack Results</h3>
+                <div class="stats" id="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="requests">0</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="success">0</div>
+                        <div class="stat-label">Successful</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="failed">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="time">0s</div>
+                        <div class="stat-label">Duration</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                </div>
+                
+                <div class="status" id="status">Status: Attack stopped</div>
+            </div>
+            
+            <div class="warning">
+                Hello Friend 
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectAttackType(type) {
+            document.querySelectorAll('.attack-type').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector(`.attack-type:nth-child(${['http','tcp','udp','slow'].indexOf(type)+1})`).classList.add('selected');
+            document.getElementById(type).checked = true;
+        }
+
+        document.getElementById('target').addEventListener('change', function() {
+            const target = this.value;
+            const portField = document.getElementById('port');
+            if (!portField.value) {
+                if (target.startsWith('https://')) {
+                    portField.value = 443;
+                } else {
+                    portField.value = 80;
+                }
+            }
+        });
+
+        async function startAttack() {
+            const form = document.getElementById('attackForm');
+            const formData = new FormData(form);
+            const data = {
+                target: formData.get('target'),
+                port: parseInt(formData.get('port') || '80'),
+                attack_type: formData.get('attack_type'),
+                threads: parseInt(formData.get('threads')),
+                duration: parseInt(formData.get('duration')),
+                stealth_mode: formData.get('stealth_mode') === 'on',
+                action: 'start'
+            };
+
+            try {
+                const response = await fetch('/api/attack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.status === 'started') {
+                    document.getElementById('status').textContent = 'Status: Attack in progress';
+                    document.getElementById('results').classList.add('visible');
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error starting attack:', error);
+            }
+        }
+
+        async function stopAttack() {
+            try {
+                const response = await fetch('/api/attack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'stop' })
+                });
+                const result = await response.json();
+                if (result.status === 'stopped') {
+                    document.getElementById('status').textContent = 'Status: Attack stopped';
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error stopping attack:', error);
+            }
+        }
+
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                if (stats.requests > 0) {
+                    document.getElementById('requests').textContent = stats.requests;
+                    document.getElementById('success').textContent = stats.success;
+                    document.getElementById('failed').textContent = stats.failed;
+                    document.getElementById('time').textContent = stats.time + 's';
+                    document.getElementById('progress-bar').style.width = stats.success_percentage + '%';
+                    document.getElementById('results').classList.add('visible');
+                }
+                if (document.getElementById('status').textContent.includes('in progress')) {
+                    setTimeout(updateStats, 1000);
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+    </script>
+</body>
+  </html>
